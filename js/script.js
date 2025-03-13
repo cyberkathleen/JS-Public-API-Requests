@@ -1,18 +1,27 @@
 // Element selectors
 const gallery = document.getElementById('gallery');
 
-// Fetch 12 users data from the Random User Generator API
+/**
+ * Fetches 12 random users from the Random User Generator API
+ * and displays them on the page.
+ */
 fetch('https://randomuser.me/api/?results=12')
   .then(response => response.json())
   .then(data => displayUsers(data.results))
   .catch(error => console.error('Looks like there was an error:\n', error))
 
-// Function to display the 12 users
+/**
+ * Displays 12 user profiles in the gallery section.
+ * Each user profile includes an img, name, email, and location.
+ * Clicking on a user profile will open a modal with more details.
+ * 
+ * @param {Array} users - An array of user objects retrieved from the API.
+ */
 function displayUsers(users) {
   gallery.innerHTML = '';
 
   users.forEach(user => {
-    // HTML for each user
+    // Create HTML for each user card
     const html = `
       <div class="card">
         <div class="card-img-container">
@@ -29,7 +38,7 @@ function displayUsers(users) {
     // Add user card to the gallery
     gallery.insertAdjacentHTML('beforeend', html);
 
-    // Add event listener to create modal when the card is clicked
+    // Add click event listener to open the modal for the clicked user
     const card = gallery.lastElementChild;
     card.addEventListener('click', () => {
       createModal(user);
@@ -38,15 +47,23 @@ function displayUsers(users) {
 }
 
 // Function to create and display a modal window with user details
+/**
+ * Creates and displays a modal window containing detailed user information.
+ * Includes image, name, email, location, phone number, full address, and birthday.
+ * Also adds functionality to close the modal by clicking the close button
+ * or clicking outside the modal content.
+ * 
+ * @param {Object} user - The user object containing profile details.
+ */
 function createModal(user) {
-  // Format birthday to MM/DD/YYYY
+  // Format user's birthday to MM/DD/YYYY
   const birthday = new Date(user.dob.date).toLocaleDateString('en-US', {
     month: '2-digit',
     day: '2-digit',
     year: 'numeric'
   });
 
-  // Modal template
+  // Create modal structure
   const html = `
     <div class="modal-container">
       <div class="modal">
@@ -68,7 +85,7 @@ function createModal(user) {
   // Append modal to the body
   gallery.insertAdjacentHTML('afterend', html);
 
-  // Selectors for event listeners to close the modal
+  // Select the newly created modal elements
   const modalContainer = document.querySelector('.modal-container');
   const closeBtn = document.getElementById('modal-close-btn');
 
