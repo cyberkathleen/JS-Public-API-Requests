@@ -1,13 +1,38 @@
 // Element selectors
 const gallery = document.getElementById('gallery');
+const searchContainer = document.querySelector('.search-container');
+
+let usersData = []; // Fetched users
 
 /**
- * Fetches 12 random users from the Random User Generator API
- * and displays them on the page.
+ * Insert the search input field into the DOM
  */
-fetch('https://randomuser.me/api/?results=12')
+function addSearchBar() {
+  // Search input template
+  const html = `
+    <form action="#" method="get">
+      <input type="search" id="search-input" class="search-input" placeholder="Search...">
+      <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+    </form>
+  `;
+
+  // Insert search input
+  searchContainer.insertAdjacentHTML('beforeend', html);
+
+  // Add event listener for real-time search
+  document.getElementById('search-input').addEventListener('input', filterUsers);
+}
+
+/**
+ * Fetches 12 random users with English-readable nationalities
+ * from the Random User Generator API and displays them on the page.
+ */
+fetch('https://randomuser.me/api/?results=12&nat=au,ca,gb,us')
   .then(response => response.json())
-  .then(data => displayUsers(data.results))
+  .then(data => {
+    usersData = data.results;
+    displayUsers(data.results);
+  })
   .catch(error => console.error('Looks like there was an error:\n', error))
 
 /**
@@ -18,6 +43,7 @@ fetch('https://randomuser.me/api/?results=12')
  * @param {Array} users - An array of user objects retrieved from the API.
  */
 function displayUsers(users) {
+  // Clear previous results
   gallery.innerHTML = '';
 
   users.forEach(user => {
@@ -40,13 +66,24 @@ function displayUsers(users) {
 
     // Add click event listener to open the modal for the clicked user
     const card = gallery.lastElementChild;
-    card.addEventListener('click', () => {
-      createModal(user);
-    });
+    card.addEventListener('click', () => createModal(user));
   });
 }
 
-// Function to create and display a modal window with user details
+
+function filterUsers() {
+  const searchInput = document.getElementById('search-input').value.toLowerCase();
+
+  // Filter users based on name match
+  const filteredUsers = usersData.filter(user => {
+    const fullName = `${user.name.first} ${user.name.last}`.toLowerCase();
+    return fullName.includes(searchInput);
+  });
+
+  // Update gallery with filtered users
+  displayUsers(filteredUsers);
+}
+
 /**
  * Creates and displays a modal window containing detailed user information.
  * Includes image, name, email, location, phone number, full address, and birthday.
@@ -97,3 +134,6 @@ function createModal(user) {
     if (e.target === modalContainer) modalContainer.remove();
   });
 }
+
+// Initialize the search bar
+addSearchBar();
