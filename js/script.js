@@ -19,7 +19,7 @@ function addSearchBar() {
   // Insert search input
   searchContainer.insertAdjacentHTML('beforeend', html);
 
-  // Add event listener for real-time search
+  // Real-time search
   document.getElementById('search-input').addEventListener('input', filterUsers);
 }
 
@@ -70,7 +70,9 @@ function displayUsers(users) {
   });
 }
 
-
+/**
+ * Filters users based on the search input and updates the displayed results.
+ */
 function filterUsers() {
   const searchInput = document.getElementById('search-input').value.toLowerCase();
 
@@ -86,19 +88,18 @@ function filterUsers() {
 
 /**
  * Creates and displays a modal window containing detailed user information.
- * Includes image, name, email, location, phone number, full address, and birthday.
- * Also adds functionality to close the modal by clicking the close button
+ * Adds functionality to close the modal by clicking the close button
  * or clicking outside the modal content.
+ * Adds functionality to navigate between employees using "Prev" and "Next" buttons.
  * 
  * @param {Object} user - The user object containing profile details.
  */
 function createModal(user) {
-  // Format user's birthday to MM/DD/YYYY
-  const birthday = new Date(user.dob.date).toLocaleDateString('en-US', {
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric'
-  });
+  // Track current user index
+  let userIndex = usersData.indexOf(user);
+
+  // Format user's birthday
+  const birthday = formatBirthday(user.dob.date);
 
   // Create modal structure
   const html = `
@@ -115,6 +116,10 @@ function createModal(user) {
           <p class="modal-text">${user.location.street.number} ${user.location.street.name}, ${user.location.country}, ${user.location.postcode}</p>
           <p class="modal-text">Birthday: ${birthday}</p>
         </div>
+        <div class="modal-btn-container">
+          <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
+          <button type="button" id="modal-next" class="modal-next btn">Next</button>
+        </div>
       </div>
     </div>
   `;
@@ -122,9 +127,11 @@ function createModal(user) {
   // Append modal to the body
   gallery.insertAdjacentHTML('afterend', html);
 
-  // Select the newly created modal elements
+  // Modal elements selectors
   const modalContainer = document.querySelector('.modal-container');
   const closeBtn = document.getElementById('modal-close-btn');
+  const prevBtn = document.getElementById('modal-prev');
+  const nextBtn = document.getElementById('modal-next');
 
   // Close modal on close button click
   closeBtn.addEventListener('click', () => modalContainer.remove());
@@ -132,6 +139,72 @@ function createModal(user) {
   // Close modal if clicked outside of modal content
   modalContainer.addEventListener('click', e => {
     if (e.target === modalContainer) modalContainer.remove();
+  });
+
+  // Update navigation button states depending on user index
+  updateBtnState();
+
+  // Show modal for previous user
+  prevBtn.addEventListener('click', () => {
+    if (userIndex > 0) {
+      userIndex--;
+      updateModal();
+    }
+  });
+
+  // Show modal for next user
+  nextBtn.addEventListener('click', () => {
+    if (userIndex < usersData.length - 1) {
+      userIndex++;
+      updateModal();
+    }
+  });
+
+  /**
+   * Updates the modal content to show a different user's details.
+   */
+  function updateModal() {
+    // Get new user data
+    const newUser = usersData[userIndex];
+
+    // Format user birthday
+    const newBirthday = formatBirthday(newUser.dob.date);
+
+    // Update modal content
+    document.querySelector('.modal-img').src = newUser.picture.large;
+    document.querySelector('.modal-name').textContent = `${newUser.name.first} ${newUser.name.last}`;
+    document.querySelectorAll('.modal-text')[0].textContent = newUser.email;
+    document.querySelectorAll('.modal-text')[1].textContent = newUser.location.city;
+    document.querySelectorAll('.modal-text')[2].textContent = newUser.cell;
+    document.querySelectorAll('.modal-text')[3].textContent = 
+      `${newUser.location.street.number} ${newUser.location.street.name}, ${newUser.location.country}, ${newUser.location.postcode}`;
+    document.querySelectorAll('.modal-text')[4].textContent = `Birthday: ${newBirthday}`;
+
+    // Update nav button states
+    updateBtnState();
+  }
+
+  /**
+   * Enables or disables the "Previous" and "Next" buttons based on the current user index.
+   */
+  function updateBtnState() {
+    // Hide "Prev" if at first user
+    prevBtn.style.display = userIndex === 0 ? 'none' : 'block';
+    // Hide "Next" if at last user
+    nextBtn.style.display = userIndex === usersData.length - 1 ? 'none' : 'block';
+  }
+}
+
+/**
+ * Formats a user's birthday into MM/DD/YYYY format.
+ * @param {string} dateString - The user's date of birth in ISO format.
+ * @returns {string} - The formatted date string.
+ */
+function formatBirthday(dateString) {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric'
   });
 }
 
