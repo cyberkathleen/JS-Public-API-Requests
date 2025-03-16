@@ -9,6 +9,15 @@ A dynamic user directory that fetches user data from the Random User Generator A
 - Click on a user to open a modal displaying more detailed information about that user.
 - Navigate between users in the modal using "Prev" and "Next" buttons.
 
+## Custom Styling Changes
+
+To personalize the project and enhance its visual appeal, the following styling improvements were made:
+
+- Changed the font to a more modern and readable style.
+- Updated the page background color to have more color.
+- Customized the "Prev" and "Next" buttons with a new background color to make them stand out.
+- Added a hover and box shadow effect to the user cards for a more interactive feel.
+
 ## Technologies Used
 
 - HTML5

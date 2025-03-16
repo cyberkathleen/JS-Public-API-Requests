@@ -14,9 +14,9 @@ html, body {
 }
 
 body {
-    font-family: "Nunito", sans-serif;
+    font-family: "Noto Sans", sans-serif;
     text-align: center;
-    background: rgba(235, 235, 235, 0.9);
+    background: rgba(221, 215, 255, 0.9);
 }
 
 header {
@@ -198,8 +198,9 @@ header h1 {
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.9);
     padding: 0.75em 1.5em;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(29, 0, 103, 0.8);
     border-radius: 0.35em;
+    border: 2px solid rgba(29, 0, 103, 0.8);
     transition: .4s ease-out;
   }
   
@@ -246,6 +247,8 @@ header h1 {
     .card:hover {
         background: rgba(255, 255, 255, 1);
         border: 1px solid rgba(50, 50, 50, 0.9);
+        transform: scale(1.05);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
     }
 
     .card:hover .card-text {
@@ -254,6 +257,6 @@ header h1 {
 
     .btn:hover {
         background: rgba(255, 255, 255, 1);
-        color: rgba(25, 25, 25, 1); 
+        color: rgba(29, 0, 103, 0.8); 
     }
 }
